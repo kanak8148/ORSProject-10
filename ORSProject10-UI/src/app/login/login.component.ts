@@ -91,6 +91,10 @@ export class LoginComponent implements OnInit {
 
 
   signIn() {
+
+   
+         
+  
     var _self = this;   
     this.form.error = false;
     const requestedUrl = this.httpService.userparams.url;//to get the URI
@@ -98,6 +102,13 @@ export class LoginComponent implements OnInit {
     this.httpService.post(this.endpoint + "/login", this.form, function (res) {
 
       console.log('MyResponse', res);
+      if(true){
+        let x =1;
+        var y = 2;
+        console.log('lettttttttt',x);
+
+    }
+    console.log('varrrrrrrrrrrr',y);
 
       
       _self.form.message = '';

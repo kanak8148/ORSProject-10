@@ -32,7 +32,7 @@ import com.rays.common.ORSResponse;
 import com.rays.common.UserContext;
 import com.rays.common.attachment.AttachmentDTO;
 import com.rays.common.attachment.AttachmentServiceInt;
-import com.rays.config.JwtTokenUtil;
+import com.rays.config.JWTUtil;
 import com.rays.dto.UserDTO;
 import com.rays.form.LoginForm;
 import com.rays.form.UserForm;
@@ -69,7 +69,7 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private JWTUtil jwtTokenUtil;
 
 	@Autowired
 	private UserDetailsService jwtService;
@@ -116,7 +116,7 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		} else {	
 			UserContext context = new UserContext(dto);
 			
-//			 session.setAttribute("userContext", context); 				
+//			 session.setAttribute("userContext", context); 				       
 			
 			session.setAttribute("test", dto.getFirstName()); 
 			
@@ -130,10 +130,8 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 			
 			/* System.out.println("jsessionid " + session.getId()); */
 			System.out.println("Before calling userDetail authenticate");
-			
-			final UserDetails userDetails = jwtService.loadUserByUsername(form.getLoginId());
-			
-			final String token = jwtTokenUtil.generateToken(userDetails);
+		
+			final String token = jwtTokenUtil.generateToken(form.getLoginId());
 			
 			res.addResult("token", token);
 			return res;
@@ -173,7 +171,7 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 
 	/**
 	 * Register new user
-	 * 
+	 *  
 	 * @param form
 	 * @param bindingResult
 	 * @return
@@ -201,6 +199,8 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		dto.setLastName(form.getLastName());
 		dto.setLoginId(form.getLogin());
 		dto.setEmail(form.getLogin());
+		
+		
 		dto.setGender(form.getGender());
 		dto.setDob(form.getDob());
 		System.out.println(form.getDob() + "--->>>>>");

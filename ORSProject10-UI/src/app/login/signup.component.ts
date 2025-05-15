@@ -71,9 +71,7 @@ export class SignUpComponent implements OnInit {
 
 
   reset(){
-    console.log("Kuldeep..")
-   this.form.inputerror='';
-   this.form.myReset=false
+    location.reload();
 
    
    

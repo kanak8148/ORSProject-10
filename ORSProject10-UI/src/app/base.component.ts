@@ -15,7 +15,7 @@ export class BaseCtl implements OnInit {
     search: null,
     delete: null,
     deleteMany: null,
-    preload: null,
+    preload: null,  
     report: null
   }
 
@@ -117,7 +117,7 @@ export class BaseCtl implements OnInit {
     var _self = this;
     console.log("Search Form", _self.form.searchParams);
     this.serviceLocator.httpService.post(_self.api.search + "/" + _self.form.pageNo, _self.form.searchParams, function (res) {
-
+console.log("in serch method ");
 
       if (res.success) {
         _self.form.list = res.result.data;
@@ -289,6 +289,7 @@ export class BaseCtl implements OnInit {
    */
 
   forward(page) {
+    console.log("in forward method.............")
     console.log(page + '--->>page value');
     this.serviceLocator.forward(page);
   }

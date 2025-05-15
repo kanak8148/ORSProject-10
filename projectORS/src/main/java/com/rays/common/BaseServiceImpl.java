@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rays.exception.DatabaseException;
 import com.rays.exception.DuplicateRecordException;
 
-
-
 /**
  * @authorkanaksoni
  *
@@ -28,15 +26,12 @@ public abstract class BaseServiceImpl<T extends BaseDTO, D extends BaseDAOInt<T>
 
 	@Transactional(readOnly = true)
 	public T findById(long id, UserContext userContext) {
-		T dto = baseDao.findByPK(id, userContext);
-		// T dto baseDao.findByPK(Class<T>, pk)
-		return dto;
+		return baseDao.findByPK(id, userContext);
 	}
 	
 	@Transactional(readOnly = true)
 	public T findByUniqueKey(String att, String val, UserContext userContext) {
-		T dto = baseDao.findByUniqueKey(att, val, userContext);
-		return dto;
+		return baseDao.findByUniqueKey(att, val, userContext);
 	}
 
 	@Transactional(readOnly = true)
@@ -44,27 +39,17 @@ public abstract class BaseServiceImpl<T extends BaseDTO, D extends BaseDAOInt<T>
 		System.out.println("Search run in Baseservice......Jayati");
 		return baseDao.search(dto, pageNo, pageSize, userContext);
 	}
-	
-	/*
-	 * public List<T> searchMany(T dto, int pageNo, int pageSize, UserContext
-	 * userContext) { System.out.println("searchMany run in Baseservice"); return
-	 * baseDao.searchMany(dto, pageNo, pageSize, userContext); }
-	 */
-	
 
 	@Transactional(readOnly = true)
 	public List<T> search(T dto, UserContext userContext) {
 		System.out.println("baseservice Search run.....Kuldeep ");
 		return baseDao.search(dto, userContext);  
-		
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public long add(T dto, UserContext userContext) throws DuplicateRecordException {
-		// check duplicate
 		System.out.println("add() run in BaseSecrvice......Kuldeep ");
-		long pk = baseDao.add(dto, userContext);
-		return pk;
+		return baseDao.add(dto, userContext);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -94,5 +79,4 @@ public abstract class BaseServiceImpl<T extends BaseDTO, D extends BaseDAOInt<T>
 		log.debug("Base Service delete End");
 		return dto;
 	}
-
 }

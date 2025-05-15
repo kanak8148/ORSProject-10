@@ -51,6 +51,21 @@ import { FooterComponent } from './footer/footer.component';
 import { AuthService } from './auth.service';
 import {MyprofileComponent} from './user/myprofile.component';
 import { JasperReportComponent } from './jasper-report/jasper-report.component';
+import { TestComponent } from './test/test.component';
+import { ProjectComponent } from './project/project.component';
+import { ProjectListComponent } from './project/project-list.component';
+import { CartComponent } from './cart/cart.component';
+import { CartListComponent } from './cart/cart-list.component';
+import { ProductComponent } from './product/product.component';
+import { ProductListComponent } from './product/product-list.component';
+import { ItemComponent } from './item/item.component';
+import { ItemListComponent } from './item/item-list.component';
+import { StaffMemberComponent } from './staff-member/staff-member.component';
+import { StaffmemberlistComponent } from './staffmember/staffmemberlist.component';
+
+
+
+
 
 
 export function myHttpLoader(http: HttpClient) {
@@ -93,7 +108,24 @@ export function myHttpLoader(http: HttpClient) {
     SpinnerComponent,
     FooterComponent,
     MyprofileComponent,
-    JasperReportComponent
+    JasperReportComponent,
+    TestComponent,
+    ProjectComponent,
+    ProjectListComponent,
+    CartComponent,
+    CartListComponent,
+    ProductComponent,
+    ProductListComponent,
+    ItemComponent,
+    ItemListComponent,
+     StaffMemberComponent,
+     StaffmemberlistComponent,
+
+    
+    
+    
+  
+   
   ],
   imports: [
     BrowserModule,

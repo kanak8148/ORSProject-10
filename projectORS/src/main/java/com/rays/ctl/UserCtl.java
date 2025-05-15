@@ -1,4 +1,3 @@
-
 package com.rays.ctl;
 
 import java.io.IOException;
@@ -40,15 +39,14 @@ import com.rays.service.RoleServiceInt;
 import com.rays.service.UserServiceInt;
 
 /**
- * @authorkanaksoni
- *
+ * @author kanaksoni
  */
 @RestController
 @RequestMapping(value = "User")
 public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
-	@Autowired
 
-	RoleServiceInt roleService = null;
+	@Autowired
+	RoleServiceInt roleService;
 
 	@Autowired
 	UserServiceInt userService;
@@ -56,15 +54,11 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	@Autowired
 	AttachmentServiceInt attachmentService;
 
-	/**
-	 * Send email
-	 */
 	@Autowired
 	public EmailServiceImpl emailSender;
 
 	@GetMapping("/preload")
 	public ORSResponse preload() {
-		System.out.println("inside preload Jayati");
 		ORSResponse res = new ORSResponse(true);
 		RoleDTO dto = new RoleDTO();
 		dto.setStatus(RoleDTO.ACTIVE);
@@ -78,174 +72,86 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		ORSResponse res = new ORSResponse(true);
 		HttpSession session = req.getSession();
 		session.invalidate();
-		// res.setSuccess(true);
 		res.addMessage("Logout Successfully");
-		// res.addResult("roleList", list);
-		System.out.println("Jayati logout");
 		return res;
 	}
 
-	/*
-	 * @GetMapping("logout") public ORSResponse logout(HttpServletRequest request,
-	 * HttpServletResponse response) { System.out.println("logout runnnnn");
-	 * HttpSession session = request.getSession(); session.invalidate();
-	 * 
-	 * // request.getSession().invalidate(); //
-	 * System.out.println(request.getSession().getId() + "session id aftr //
-	 * invalidate"); System.out.println(session.getId() +
-	 * "session id aftr invalidate --->"+ session.getAttribute("test"));
-	 * 
-	 * ORSResponse res = new ORSResponse(true); res.addMessage("logout Suceessss");
-	 * return res; }
-	 */
-
-	/**
-	 * Updates profile of logged in user
-	 * 
-	 * @param form
-	 * @param bindingResult
-	 * @return
-	 */
 	@PostMapping("myprofile")
 	public ORSResponse myProfile(@RequestBody @Valid MyProfileForm form, BindingResult bindingResult) {
-
 		ORSResponse res = validate(bindingResult);
-
 		if (!res.isSuccess()) {
 			return res;
 		}
-
 		UserDTO dto = baseService.findById(userContext.getUserId(), userContext);
 		dto.setFirstName(form.getFirstName());
 		dto.setLastName(form.getLastName());
-		// dto.setLoginId(form.getLogin());
 		dto.setDob(form.getDob());
 		dto.setPhone(form.getMobileNo());
-		
 		dto.setGender(form.getGender());
-
 		baseService.update(dto, userContext);
-
 		return res;
 	}
 
-	/**
-	 * Changes password of logged-in user
-	 * 
-	 * @param form
-	 * @param bindingResult
-	 * @return
-	 */
 	@PostMapping("changepassword")
 	public ORSResponse changePassword(@RequestBody @Valid ChangePasswordForm form, BindingResult bindingResult) {
-		System.out.println("Inside changepassword in userctl......Jayati");
-
 		ORSResponse res = validate(bindingResult);
-
 		if (!res.isSuccess()) {
 			return res;
 		}
-
-		UserDTO changedDto = baseService.changePassword(form.getLoginId(), form.getOldPassword(), form.getNewPassword(),
-				userContext);
-
+		UserDTO changedDto = baseService.changePassword(form.getLoginId(), form.getOldPassword(), form.getNewPassword(), userContext);
 		if (changedDto == null) {
 			res.setSuccess(false);
 			res.addMessage("Invalid old password");
 			return res;
 		}
-
 		res.setSuccess(true);
 		res.addMessage("Password has been changed");
-
 		return res;
 	}
 
-	/**
-	 * Forgot password
-	 * 
-	 * @param form
-	 * @param bindingResult
-	 * @return
-	 */
 	@PostMapping("forgetPassword")
 	public ORSResponse forgetPassword(@RequestBody @Valid ForgetPasswordForm form, BindingResult bindingResult) {
-
 		ORSResponse res = validate(bindingResult);
-		System.out.println("form.getLogin(====" + form.getLogin());
-
 		UserDTO fDTO = baseService.forgotPassword(form.getLogin());
-
 		if (fDTO == null) {
 			res.setSuccess(false);
 			res.addMessage("LoginId / Email not found.");
 			return res;
-		} else {
-			String code = "U-CP";
-			EmailDTO dto = new EmailDTO();
-			dto.addTo(fDTO.getEmail());
-			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("code", "U-CP");
-			dto.setMessageCode(code, params);
-			emailSender.send(dto, null);
-			res.setSuccess(true);
-			res.addMessage("Hello " + fDTO.getFirstName() + " " + fDTO.getLastName()
-					+ " ! Your password has been sent on your email.");
-
 		}
-
+		String code = "U-CP";
+		EmailDTO dto = new EmailDTO();
+		dto.addTo(fDTO.getEmail());
+		HashMap<String, String> params = new HashMap<>();
+		params.put("code", "U-CP");
+		dto.setMessageCode(code, params);
+		emailSender.send(dto, null);
+		res.setSuccess(true);
+		res.addMessage("Hello " + fDTO.getFirstName() + " " + fDTO.getLastName()
+				+ " ! Your password has been sent on your email.");
 		return res;
 	}
 
-	/**
-	 * Uploads user profile picture of logged in user.
-	 * 
-	 * @param id
-	 * @param file
-	 * @return
-	 */
 	@PostMapping("/profilePic")
 	public ORSResponse uploadPic(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
 		return uploadPic(userContext.getUserId(), file, req);
 	}
 
-	/**
-	 * Uploads profile picture of given user id
-	 * 
-	 * @param userId
-	 * @param file
-	 * @param req
-	 * @return
-	 */
 	@PostMapping("/profilePic/{userId}")
 	public ORSResponse uploadPic(@PathVariable Long userId, @RequestParam("file") MultipartFile file,
 			HttpServletRequest req) {
 
-		System.out.println("User ID id --------------anshul" + userId);
-
-		System.out.println("Image ====== >> " + file.getOriginalFilename());
-
 		UserDTO userDTO = baseService.findById(userId, userContext);
-
 		AttachmentDTO doc = new AttachmentDTO(file);
-
-		System.out.println("doc ======= >>> " + doc);
-
 		doc.setDescription("Profile picture");
-		System.out.println(doc.getDescription() + "description");
-
 		doc.setPath(req.getServletPath());
-		System.out.println(doc.getPath() + "path-----Anshul");
 		doc.setUserId(userId);
-		System.out.println(doc.getUserId() + "id-----Anshul");
 
 		if (userDTO.getImageId() != null && userDTO.getImageId() > 0) {
 			doc.setId(userDTO.getImageId());
 		}
-		System.out.println("before calling save");
+
 		Long imageId = attachmentService.save(doc, userContext);
-		System.out.println("new imageId ==== >> " + imageId);
-		// Update new image id
+
 		if (userDTO.getImageId() == null || userDTO.getImageId() == 0) {
 			userDTO.setImageId(imageId);
 			baseService.update(userDTO, userContext);
@@ -254,29 +160,16 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		ORSResponse res = new ORSResponse();
 		res.setSuccess(true);
 		res.addResult("imageId", imageId);
-
 		return res;
 	}
 
-	/**
-	 * Downloads profile picture of logged in user
-	 * 
-	 * @param response
-	 */
 	@GetMapping("/profilePic")
 	public @ResponseBody void downloadPic(HttpServletResponse response) {
 		downloadPic(userContext.getUserId(), response);
 	}
 
-	/**
-	 * Downloads profile picture of given user id
-	 * 
-	 * @param userId
-	 * @param response
-	 */
 	@GetMapping("/profilePic/{userId}")
 	public @ResponseBody void downloadPic(@PathVariable Long userId, HttpServletResponse response) {
-
 		UserDTO userDTO = baseService.findById(userId, userContext);
 		AttachmentDTO attachmentDTO = attachmentService.findById(userDTO.getImageId(), userContext);
 		try {
@@ -285,7 +178,6 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 				OutputStream out = response.getOutputStream();
 				out.write(attachmentDTO.getDoc());
 				out.close();
-				System.out.println("Profile pic......Jayati");
 			} else {
 				response.getWriter().write("ERROR: File not found");
 			}
@@ -294,13 +186,6 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		}
 	}
 
-	/**
-	 * Uploads a document for a user
-	 * 
-	 * @param id
-	 * @param file
-	 * @return
-	 */
 	@PostMapping("/doc/{userId}")
 	public ORSResponse upload(@PathVariable Long userId, @RequestParam(required = false) String description,
 			@RequestParam("file") MultipartFile file, HttpServletRequest req) {
@@ -315,19 +200,11 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		ORSResponse res = new ORSResponse();
 		res.setSuccess(true);
 		res.addResult("docId", pk);
-
 		return res;
 	}
 
-	/**
-	 * Downloads user document
-	 * 
-	 * @param id
-	 * @param response
-	 */
 	@GetMapping("/doc/{id}")
 	public @ResponseBody void download(@PathVariable Long id, HttpServletResponse response) {
-
 		AttachmentDTO attachmentDTO = attachmentService.findById(id, userContext);
 		try {
 			if (attachmentDTO != null) {
@@ -343,13 +220,6 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		}
 	}
 
-	/**
-	 * Forgot Password
-	 * 
-	 * @param form
-	 * @param bindingResult
-	 * @return
-	 */
 	@GetMapping("forgotPassword/{loginId}")
 	public ORSResponse myProfile(@PathVariable String loginId, HttpServletResponse response) {
 		ORSResponse res = new ORSResponse();
@@ -367,5 +237,4 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		}
 		return res;
 	}
-
 }

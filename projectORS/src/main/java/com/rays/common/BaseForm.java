@@ -147,9 +147,7 @@ public class BaseForm {
 		return dto;
 	}
 
-	/*
-	 * public < T extends BaseDTO> initDTO(T dto) { return new UserDTO(); }
-	 */
+	
 
 	/**
 	 * Converts dto into form.

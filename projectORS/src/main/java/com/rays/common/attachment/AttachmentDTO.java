@@ -39,6 +39,7 @@ public class AttachmentDTO extends AttachmentBaseDTO {
 	/**
 	 * Contains file data
 	 */
+	//Large object binary
 	@Lob
 	@Column(name = "DOC")
 	private byte[] doc;

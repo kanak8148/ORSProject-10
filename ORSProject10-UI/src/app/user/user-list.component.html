@@ -23,23 +23,40 @@ background-size: cover;width:auto;
         </div>
       </div>
       <!-- <button class="filebtn third">Button 3</button> -->
-      <div class="row p-1">
-        <div class="col-sm-1"></div>
-        <div class="col-sm-2">
+     <div class="row p-1">
+      
+      <div class="col-sm-2">
           <input type="text" class="form-control" [(ngModel)]="form.searchParams.firstName"
             placeholder="{{'Search First Name' | translate}}">
 
-        </div>
+        </div> 
+
+      
+      
+      <div class="row p-1">
+    </div>
+          <div class="col-sm-2">
+            <input type="date" class="form-control" [(ngModel)]="form.searchParams.dob"
+              placeholder="{{'Search dob' | translate}}">
+  
+          </div>
         
-        <!-- <div class="col-sm-2">
-          <input type="text" class="form-control" [(ngModel)]="form.searchParams.loginId" placeholder="{{'Search Email' | translate}}">
-        </div> -->
+        
+       
         <div class="col-sm-2">
 
-          <select class="form-control" name="roleId" [(ngModel)]="form.searchParams.roleId" aria-label="ngSelected">
+   <select class="form-control" name="roleId" [(ngModel)]="form.searchParams.roleId" aria-label="ngSelected">
             <option [ngValue]="" value="undefined">{{' Select Role' | translate }}</option>
             <option *ngFor="let obj of form.preload.roleList" [value]="obj.key">{{obj.value}}</option>
-          </select>
+          </select>   
+
+
+
+       
+          
+         
+
+         
         </div>
         <div class="col-sm-2">
           <!-- <input type="text" class="form-control" [(ngModel)]="form.searchParams.status" placeholder="{{'Search Status' | translate}}"> -->
@@ -93,7 +110,7 @@ background-size: cover;width:auto;
             </thead>
             <tbody>
               <tr *ngFor="let m of form.list; let i = index" align="center">
-                <td> <input type="checkbox" #checkboxes (change)="checklistUpdate()" [disabled]="m.roleName=='Admin'"
+                <td> <input type="checkbox" #checkboxes (change)="checklistUpdate()" [disabled]="m.roleName=='admin'"
                    name="list_name" id="{{m.id}}" value="{{isMasterSel}}" />
                 </td>
                 <td> {{(form.pageNo*5)+i+ 1}} </td>
@@ -115,13 +132,17 @@ background-size: cover;width:auto;
                 <td> {{ m.dob | date : 'dd-MM-yyyy'}} </td>
                 <td>
 
-                  <button  class="fa fa-edit text-primary " id="nnn" [disabled]="m.roleName=='Admin'"
-                   (click)="forward( '/user/' +  m.id)" style="
-                  cursor: pointer;"></button>
-                  <!-- <a (click)="forward( '/user/' +  m.id)" style="
-                    cursor: pointer;">
-                    <i class="fa fa-edit text-primary"></i>
-                  </a> -->
+                  <!-- <button  class="fa fa-edit text-primary " id="nnn" [disabled]="m.roleName=='admin'"
+                   (clcik)="forward('/user/'+ m.id)" style="cursor: pointer;"></button> -->
+                   <a 
+                   (click)="m.roleName !== 'admin' && forward('/user/' + m.id)" 
+                   [style.pointerEvents]="m.roleName === 'admin' ? 'none' : 'auto'"
+                   [style.opacity]="m.roleName === 'admin' ? '0.5' : '1'"
+                   style="cursor: pointer;"
+                   id="nnn"
+                 >
+                   <i class="fa fa-edit text-primary"></i>
+                 </a>
                   <!-- /
                   <a (click)="delete(m.id)" style="cursor: pointer;">
                     <i class="fa fa-trash text-danger "></i>
@@ -152,7 +173,7 @@ background-size: cover;width:auto;
             </tr>
             </table>
 
-
+         
 
       </div>
     </div>

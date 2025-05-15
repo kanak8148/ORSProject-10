@@ -202,7 +202,9 @@
 "firstname": "firstname is required",
 "mobile": "alternate phone number is required",
 "gender": "gender is requierd",
+
 "dob" : "dob is required",
+"date" : "please enter date",
 "loginId" : "login id is required",
 "role" : "role is required",
 "status": "status is required",

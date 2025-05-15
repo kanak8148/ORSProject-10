@@ -32,6 +32,16 @@ import { LoaderComponent } from './loader/loader.component';
 import { SpinnerComponent} from './spinner/spinner.component';
 import {MyprofileComponent} from './user/myprofile.component';
 import {JasperReportComponent} from './jasper-report/jasper-report.component';
+import { ProjectComponent } from './project/project.component';
+import { ProjectListComponent } from './project/project-list.component';
+import { CartComponent } from './cart/cart.component';
+import { CartListComponent } from './cart/cart-list.component';
+import { ProductComponent } from './product/product.component';
+import { ProductListComponent } from './product/product-list.component';
+import { ItemComponent } from './item/item.component';
+import { ItemListComponent } from './item/item-list.component';
+import { StaffMemberComponent } from './staff-member/staff-member.component';
+import { StaffmemberlistComponent } from './staffmember/staffmemberlist.component';
 const routes: Routes = [
     {
         path: '',
@@ -69,6 +79,72 @@ const routes: Routes = [
         path: 'signup',
         component: SignUpComponent
     },
+    {
+        path: 'project',
+        component: ProjectComponent
+    },
+    {
+    path: 'projectlist',
+    component: ProjectListComponent
+},
+{
+    path: 'project/:id',
+    component: ProjectComponent
+  
+},
+{
+    path: 'Cart',
+    component: CartComponent
+},
+{
+path: 'CartList',
+component: CartListComponent
+},
+{
+path: 'Cart/:id',
+component: CartComponent
+
+},
+{
+    path: 'Product',
+    component: ProductComponent
+},
+{
+path: 'ProductList',
+component: ProductListComponent
+},
+{
+path: 'Product/:id',
+component: ProductComponent
+
+},
+{
+    path: 'item',
+    component: ItemComponent
+},
+{
+path: 'itemList',
+component: ItemListComponent
+},
+{
+path: 'item/:id',
+component: ItemComponent
+
+},
+{
+    path: 'staff',
+    component: StaffMemberComponent
+},
+{
+path: 'staffList',
+component: StaffmemberlistComponent
+},
+{
+path: 'staff/:id',
+component: StaffMemberComponent
+
+},
+
    
     {
         path: 'marksheet',

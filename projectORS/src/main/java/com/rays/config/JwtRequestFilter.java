@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.rays.service.JwtUserDetailsService;
+import com.rays.service.JWTUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
@@ -25,65 +25,50 @@ import io.jsonwebtoken.ExpiredJwtException;
  *
  */
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JWTRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private JwtUserDetailsService jwtUserDetailsService;
+	private JWTUtil jwtUtil;
 
 	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private JWTUserDetailsService jwtUserDetailsService;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
-	String path = request.getServletPath();
-		
-		System.out.println(" Front Ctl Called " + path);
-		final String withCre = request.getHeader("name");
-		
-		System.out.println(withCre +"--->>> credentials");
-		System.out.println("JWTRequestFilter run success....Jayati");
-		final String requestTokenHeader = request.getHeader("Authorization");
-		
-		System.out.println(requestTokenHeader+"JWTFILTER IN CONFIG _______====");
-		String username = null;
-		String jwtToken = null;
-		
-		// JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
-		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-			jwtToken = requestTokenHeader.substring(7);
+
+		final String authorizationHeader = request.getHeader("Authorization");
+
+		System.out.println("JWT Token ======>>>>> " + authorizationHeader);
+
+		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+
+			String jwtToken = authorizationHeader.substring(7);
+
 			try {
-				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-			} catch (IllegalArgumentException e) {
-				System.out.println("Unable to get JWT Token");
-			} catch (ExpiredJwtException e) {
-				System.out.println("JWT Token has expired");
-			}
-		} else {
-			
-			logger.warn("JWT Token does not begin with Bearer String");
-		}
+				if (!jwtUtil.validateToken(jwtToken)) {
+					throw new Exception("Invalid JWT token");
+				}
 
-		//Once we get the token validate it.
-		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				String username = jwtUtil.extractUsername(jwtToken);
 
-			UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+				if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-			// if token is valid configure Spring Security to manually set authentication
-			if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-				System.out.println("inside validate Token.......Jayati");
-				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
-				usernamePasswordAuthenticationToken
-						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				// After setting the Authentication in the context, we specify
-				// that the current user is authenticated. So it passes the Spring Security Configurations successfully.
-				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+					UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
+
+					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+							userDetails, null, userDetails.getAuthorities());
+
+					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				}
+			} catch (Exception e) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.getWriter().write("Token is invalid... plz login again..!!");
+				return;
 			}
 		}
-		System.out.println("chain Dofilter calling---");
-		chain.doFilter(request, response);
+		filterChain.doFilter(request, response);
 	}
-
 }

@@ -66,7 +66,7 @@ createImageFromBlob(image: Blob) {
     });
 
   }
+  
 
 
 }
- 

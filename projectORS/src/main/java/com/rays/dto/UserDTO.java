@@ -13,8 +13,7 @@ import javax.validation.constraints.NotNull;
 import com.rays.common.BaseDTO;
 
 /**
- * User POJO class. It is  persistent object.
- * Author @authorkanaksoni
+ * User POJO class. It is persistent object. Author @authorkanaksoni
  */
 
 @Entity
@@ -57,13 +56,14 @@ public class UserDTO extends BaseDTO {
 
 	@NotNull
 	@Column(name = "DOB")
+	
 	private Date dob;
 
 	@Column(name = "GENDER", length = 10)
 	private String gender;
 
 	@Column(name = "IMAGE_ID")
-	private Long imageId ;
+	private Long imageId;
 
 	@Column(name = "LAST_LOGIN")
 	private Timestamp lastLogin;
@@ -243,10 +243,13 @@ public class UserDTO extends BaseDTO {
 		return id + "";
 	}
 
-	public String getValue() {
-		return firstName + " " + lastName;
-	}
 	
+	  public String getValue() {
+		  return dob + " "; }
+	  
+	 
+//	public String getValue() {
+//		return dob + ""; }
 	@Override
 	public LinkedHashMap<String, String> orderBY() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
@@ -261,7 +264,7 @@ public class UserDTO extends BaseDTO {
 		map.put("loginId", loginId);
 		return map;
 	}
-	
+
 	@Override
 	public String getUniqueKey() {
 		return "loginId";
@@ -272,7 +275,7 @@ public class UserDTO extends BaseDTO {
 		// TODO Auto-generated method stub
 		return loginId;
 	}
-	
+
 	@Override
 	public String getLabel() {
 		// TODO Auto-generated method stub

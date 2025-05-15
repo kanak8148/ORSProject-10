@@ -15,7 +15,7 @@ public class ApplicationExceptionHandlerCtl {
 	@ExceptionHandler(value = RuntimeException.class) // custom exception handle
 	public ORSResponse handleRuntimeException(RuntimeException e) {
 		ORSResponse res = new ORSResponse(false);
-		res.addMessage(e.getMessage() + "Anshul Prajapati");
+		res.addMessage(e.getMessage() + "kaanak");
 		return res;
 	}
 

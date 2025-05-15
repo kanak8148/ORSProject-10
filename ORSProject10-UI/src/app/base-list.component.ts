@@ -43,12 +43,13 @@ export class BaseListCtl extends BaseCtl {
 
 
   next() {
+    
     this.form.pageNo++;
      this.display(); 
    
    
-  //  this.isMasterSel = false ;  
-  //  this.searchOperation('previous');
+    this.isMasterSel = false ;  
+  this.searchOperation('previous');
   }
 
 exit(){ 
@@ -168,3 +169,4 @@ deleteMany(){
 }
 
 }
+

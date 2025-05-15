@@ -171,4 +171,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserDTO, UserDAOInt> implem
 		
 	}
 
+	public UserDTO findByLogin(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

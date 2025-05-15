@@ -1,7 +1,6 @@
 package com.rays.common;
 
 import java.sql.Timestamp;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -31,26 +30,16 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
-		// this.sessionFactory =
-		// entityManager.getEntityManagerFactory().unwrap(SessionFactory.class);
 	}
 
 	/**
 	 * Find record by Unique key
-	 * 
-	 * @param attribute
-	 * @param val
-	 * @param dtoClass
-	 * @return
 	 */
 	public T findByUniqueKey(String attribute, Object val, UserContext userContext) {
 
 		Class<T> dtoClass = getDTOClass();
-
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
 		CriteriaQuery<T> cq = builder.createQuery(dtoClass);
-
 		Root<T> qRoot = cq.from(dtoClass);
 
 		Predicate condition = builder.equal(qRoot.get(attribute), val);
@@ -63,7 +52,6 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		}
 
 		TypedQuery<T> query = entityManager.createQuery(cq);
-
 		List<T> list = query.getResultList();
 
 		T dto = null;
@@ -73,7 +61,6 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		}
 
 		return dto;
-
 	}
 
 	public T findByPK(long pk, UserContext userContext) {
@@ -81,90 +68,50 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		return dto;
 	}
 
-	/**
-	 * Build criteria query
-	 * 
-	 * @param dto
-	 * @return
-	 */
 	protected TypedQuery<T> createCriteria(T dto, UserContext userContext) {
 
-		System.out.println("BaseDao createCriteria run");
-
+		
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-		// Create criteria
 		CriteriaQuery<T> cq = builder.createQuery(getDTOClass());
-
-		// Columns information
 		Root<T> qRoot = cq.from(getDTOClass());
 
-		// Column of query
 		cq.select(qRoot);
 
-		// Create where conditions
 		List<Predicate> whereClause = getWhereClause(dto, builder, qRoot);
 
-		// Put organization filter
 		if (dto.isGroupFilter()) {
 			whereClause.add(builder.equal(qRoot.get("orgId"), dto.getOrgId()));
 		}
-		System.out.println(" isgroup skipped......Jayati");
 		cq.where(whereClause.toArray(new Predicate[whereClause.size()]));
 
 		List<Order> orderBys = getOrderByClause(dto, builder, qRoot);
 
-		System.out.println("after getOrder By clause........Jayati");
 		cq.orderBy(orderBys.toArray(new Order[orderBys.size()]));
 
-		System.out.println("After order by clause.......Jayati ");
 		TypedQuery<T> query = entityManager.createQuery(cq);
-		System.out.println("createCriteria end here---....Jayati");
 		return query;
-
 	}
 
-	/**
-	 * Creates WHERE clause of search
-	 * 
-	 * @param dto
-	 * @param builder
-	 * @param qRoot
-	 * @return
-	 */
 	protected abstract List<Predicate> getWhereClause(T dto, CriteriaBuilder builder, Root<T> qRoot);
 
 	public List search(T dto, int pageNo, int pageSize, UserContext userContext) {
 		System.out.println("BaseDao search run");
 
-		// System.ou t.println("Base DAO dto :: " + dto);
-		// System.out.println(userContext);
 		TypedQuery<T> query = createCriteria(dto, userContext);
 
-		System.out.println(" PAGE ->>>>>>>>>>>>>>>>" + pageNo + " --- " + pageSize);
 		if (pageSize > 0) {
-
 			query.setFirstResult(pageNo * pageSize);
 			query.setMaxResults(pageSize);
 		}
 
 		List list = query.getResultList();
-
 		return list;
-
 	}
 
 	public List search(T dto, UserContext userContext) {
 		return search(dto, 0, 0, userContext);
 	}
 
-	/**
-	 * Run HQL query
-	 * 
-	 * @param hql
-	 * @param userContext
-	 * @return
-	 */
 	public List runHQL(String hql, UserContext userContext) {
 		Query q = entityManager.createQuery(hql);
 		List l = q.getResultList();
@@ -179,9 +126,6 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		return l;
 	}
 
-	/**
-	 * Add a record
-	 */
 	public long add(T dto, UserContext userContext) {
 
 		dto.setCreatedBy(userContext.getLoginId());
@@ -198,37 +142,18 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		entityManager.persist(dto);
 
 		return dto.getId();
-
 	}
 
-	/**
-	 * Populate redundant values into dto. Overridden by child classes.
-	 * 
-	 * @param dto
-	 */
 	protected void populate(T dto, UserContext userContext) {
-
 	}
 
-	/**
-	 * Update a record
-	 */
 	public void update(T dto, UserContext userContext) {
-
 		dto.setModifiedBy(userContext.getLoginId());
 		dto.setModifiedDatetime(new Timestamp(new Date().getTime()));
-
 		populate(dto, userContext);
-
 		entityManager.merge(dto);
-
 	}
 
-	/**
-	 * Check unique keys
-	 * 
-	 * @param dto
-	 */
 	private void checkDuplicate(T dto, UserContext userContext) {
 		LinkedHashMap<String, Object> uniqueKeys = dto.uniqueKeys();
 		if (uniqueKeys == null) {
@@ -242,56 +167,23 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		});
 	}
 
-	/**
-	 * Delete a record
-	 */
 	public void delete(T dto, UserContext userContext) {
 		entityManager.remove(dto);
 	}
 
-	/**
-	 * Get DTO Class object
-	 * 
-	 * @return
-	 */
 	public abstract Class<T> getDTOClass();
 
-	/**
-	 * Check empty string
-	 * 
-	 * @param val
-	 * @return
-	 */
 	protected boolean isEmptyString(String val) {
 		return val == null || val.trim().length() == 0;
 	}
 
-	/**
-	 * Check zero number
-	 * 
-	 * @param val
-	 * @return
-	 */
 	protected boolean isZeroNumber(Double val) {
 		return val == null || val == 0;
 	}
 
-	/**
-	 * Check zero number
-	 * 
-	 * @param val
-	 * @return
-	 */
 	protected boolean isZeroNumber(Long val) {
 		return val == null || val == 0;
 	}
-
-	/**
-	 * Check zero number
-	 * 
-	 * @param val
-	 * @return
-	 */
 
 	protected boolean isZeroNumber(Integer val) {
 		return val == null || val == 0;
@@ -301,17 +193,7 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 		return val != null;
 	}
 
-	/**
-	 * Get order by clause
-	 * 
-	 * @param dto
-	 * @param builder
-	 * @param qRoot
-	 * @return
-	 */
 	protected List<Order> getOrderByClause(T dto, CriteriaBuilder builder, Root<T> qRoot) {
-
-		// Apply Order by clause
 		System.out.println("baseDAO in getOrderByClause.......Jayati ");
 		LinkedHashMap<String, String> map = dto.orderBY();
 
@@ -328,5 +210,4 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 
 		return orderBys;
 	}
-
 }

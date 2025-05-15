@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.rays.config.JwtTokenUtil;
-import com.rays.service.JwtUserDetailsService;
+import com.rays.config.JWTUtil;
+import com.rays.service.JWTUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
@@ -26,10 +26,10 @@ import io.jsonwebtoken.ExpiredJwtException;
 @Component
 public class FrontCtl extends HandlerInterceptorAdapter {
 	@Autowired
-	private JwtUserDetailsService jwtUserDetailsService;
+	private JWTUserDetailsService jwtUserDetailsService;
 
 	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private JWTUtil jwtTokenUtil;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -47,17 +47,11 @@ public class FrontCtl extends HandlerInterceptorAdapter {
 		 */
 
 		/*if (!path.startsWith("/Auth/")) {
-			System.out.println("inside if condition");
-			//System.out.println(session.getAttribute("test")+"-------test____");
+	
 			if(session.getId()==null) {
-				
-				System.out.println("inside if usercontext null");
-					
-				
 				  response.setContentType("application/json");
 				  response.setStatus(HttpServletResponse.SC_OK);
-				  
-				  
+				 
 				  
 				  response.setHeader("Access-Control-Allow-Origin", "*");
 				  response.setHeader("Access-Control-Allow-Credentials","true"); 
@@ -68,7 +62,7 @@ public class FrontCtl extends HandlerInterceptorAdapter {
 				  
 				  PrintWriter out = response.getWriter(); 
 				  out.print("{\"success\":\"false\",\"error\":\"OOPS! Your session has been expired\"}"
-				  ); out.close();
+				  ); o+ut.close();
 				 System.out.println("going to return false ");
 				 
 				 return false;
@@ -95,7 +89,7 @@ public class FrontCtl extends HandlerInterceptorAdapter {
 			System.out.println("Inside token != null");
 			jwtToken = requestTokenHeader.substring(7);
 			try {
-				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+				username = jwtTokenUtil.extractUsername(jwtToken);
 				System.out.println(username+" user-------------");
 			} catch (IllegalArgumentException e) {
 				System.out.println("Unable to get JWT Token");
@@ -113,7 +107,7 @@ public class FrontCtl extends HandlerInterceptorAdapter {
 			UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 
 			// if token is valid configure Spring Security to manually set authentication
-			if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+			if (jwtTokenUtil.validateToken(jwtToken)) {
 
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());

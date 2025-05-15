@@ -39,7 +39,8 @@ public class ProjectOrsApplication extends SpringBootServletInitializer {
 
 		WebMvcConfigurer w = new WebMvcConfigurer() {
 
-			/**]
+			/**
+			 * 
 			 * 
 			 * Add CORS
 			 */
@@ -47,18 +48,17 @@ public class ProjectOrsApplication extends SpringBootServletInitializer {
 				CorsRegistration cors = registry.addMapping("/**");
 				cors.allowedOrigins("http://localhost:4200");
 				cors.allowedHeaders("*");
-//angulas se jo creditals ayenge / cokies ke liye true kiya hey 
 				cors.allowCredentials(true);
 			}
 
 			/**
-			 * Add Interceptors
+			 * Add Interceptors method ka use kiya hey frontctl ke liye
 			 */
 
 			/*
 			 * @Override public void addInterceptors(InterceptorRegistry registry) {
 			 * registry.addInterceptor(frontCtl).addPathPatterns("/**").excludePathPatterns(
-			 * "/Auth/**"); }
+			 * "/Auth/*"); }
 			 * 
 			 * @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
 			 * registry.addResourceHandler("/**").addResourceLocations("classpath:/public/")
